@@ -5,11 +5,11 @@
 PROFILE=Release
 
 if [ ! -z "$1" ]; then
-	PROFILE=$1
+  PROFILE=$1
 fi
 
 if [ ! -z "$2" ]; then
-	NPROC="--parallel $2"
+  NPROC="--parallel $2"
 fi
 
 echo "Building glslang."
@@ -25,4 +25,3 @@ cd external/spirv-tools-build || exit
 cmake ../spirv-tools -DCMAKE_BUILD_TYPE="$PROFILE" -DSPIRV_WERROR=OFF -DCMAKE_INSTALL_PREFIX=output
 cmake --build . --config "$PROFILE" --target install "$NPROC"
 cd ../..
-
