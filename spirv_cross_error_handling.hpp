@@ -49,12 +49,12 @@ inline void
 report_and_abort(const std::string &msg)
 {
 #ifdef NDEBUG
-	(void)msg;
+    (void)msg;
 #else
-	fprintf(stderr, "There was a compiler error: %s\n", msg.c_str());
+    fprintf(stderr, "There was a compiler error: %s\n", msg.c_str());
 #endif
-	fflush(stderr);
-	abort();
+    fflush(stderr);
+    abort();
 }
 
 #define SPIRV_CROSS_THROW(x) report_and_abort(x)
@@ -62,15 +62,15 @@ report_and_abort(const std::string &msg)
 class CompilerError : public std::runtime_error
 {
 public:
-	explicit CompilerError(const std::string &str)
-	    : std::runtime_error(str)
-	{
-	}
+    explicit CompilerError(const std::string &str)
+        : std::runtime_error(str)
+    {
+    }
 
-	explicit CompilerError(const char *str)
-	    : std::runtime_error(str)
-	{
-	}
+    explicit CompilerError(const char *str)
+        : std::runtime_error(str)
+    {
+    }
 };
 
 #define SPIRV_CROSS_THROW(x) throw CompilerError(x)
