@@ -79,4 +79,3 @@ kernel void main0()
     threadgroup uint var;
     foo(var);
 }
-

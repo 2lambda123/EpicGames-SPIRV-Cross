@@ -27,4 +27,3 @@ fragment main0_out main0(main0_in in [[stage_in]])
     out.FragColor = quad_max(_17);
     return out;
 }
-

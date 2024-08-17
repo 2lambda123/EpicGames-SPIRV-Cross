@@ -156,4 +156,3 @@ fragment void main0(main0_in in [[stage_in]], const device spvBufferDescriptor<c
     rayQuery_1.reset(ray(float3(0.0), float3(1.0), 0.00999999977648258209228515625, 1.0), tlas[in.inputId], 255u, spvMakeIntersectionParams(0u));
     bool _336 = rayQuery_1.next();
 }
-

@@ -182,4 +182,3 @@ fragment void main0(main0_in in [[stage_in]])
     test_conversions();
     test_builtins(in.v4, in.v3, in.v1);
 }
-

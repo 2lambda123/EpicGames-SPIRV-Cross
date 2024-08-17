@@ -23,4 +23,3 @@ void main()
     vec4 _68 = textureBlockMatchSSDQCOM(target_samp, tgt_coords, ref_samp, ref_coords, blockSize);
     fragColor = _68;
 }
-

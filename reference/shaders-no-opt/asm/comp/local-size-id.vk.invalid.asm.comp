@@ -28,4 +28,3 @@ void main()
 {
     _10.values[gl_GlobalInvocationID.x] = ((((_10.values[gl_GlobalInvocationID.x] + vec4(2.0)) + vec3(_38).xyzz) * float(int(gl_WorkGroupSize.x))) * float(int(gl_WorkGroupSize.y))) * float(int(2u));
 }
-

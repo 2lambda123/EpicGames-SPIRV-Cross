@@ -35,4 +35,3 @@ void main()
                     ref_coords,                                    // reference coords
                     blockSize);                                    // block size
 }
-

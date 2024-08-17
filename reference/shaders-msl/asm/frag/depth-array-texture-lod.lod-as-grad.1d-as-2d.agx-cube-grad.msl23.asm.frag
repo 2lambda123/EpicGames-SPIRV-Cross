@@ -52,4 +52,3 @@ fragment main0_out main0(main0_in in [[stage_in]], depthcube_array<float> u_samp
     out.o_color = float4(u_sampler.sample_compare(u_samplerSmplr, in.v_texCoord.xyz, uint(rint(in.v_texCoord.w)), in.v_drefLodBias.x, spvGradientCube(in.v_texCoord.xyz, exp2(in.v_drefLodBias.y - 0.5) / float3(u_sampler.get_width()), exp2(in.v_drefLodBias.y - 0.5) / float3(u_sampler.get_width()))), 0.0, 0.0, 1.0);
     return out;
 }
-

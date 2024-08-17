@@ -81,4 +81,3 @@ fragment main0_out main0(main0_in in [[stage_in]], raytracing::acceleration_stru
     out.outColor = in.inPos;
     return out;
 }
-

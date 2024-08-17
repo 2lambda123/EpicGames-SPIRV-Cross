@@ -18,4 +18,3 @@ void main()
     float _39 = imageAtomicAdd(uImage, ivec2(gl_GlobalInvocationID.xy), _15);
     float _45 = imageAtomicExchange(uImage, ivec2(gl_GlobalInvocationID.xy), _15);
 }
-

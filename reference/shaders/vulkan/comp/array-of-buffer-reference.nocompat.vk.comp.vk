@@ -22,4 +22,3 @@ void main()
     blocks[3] = ubo.blocks[3];
     blocks[gl_WorkGroupID.x].v = 20.0;
 }
-

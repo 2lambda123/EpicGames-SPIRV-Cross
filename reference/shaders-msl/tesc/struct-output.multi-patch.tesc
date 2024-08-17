@@ -42,4 +42,3 @@ kernel void main0(uint3 gl_GlobalInvocationID [[thread_position_in_grid]], devic
     spvTessLevel[gl_PrimitiveID].edgeTessellationFactor[2] = half(1.0);
     spvTessLevel[gl_PrimitiveID].edgeTessellationFactor[3] = half(1.0);
 }
-

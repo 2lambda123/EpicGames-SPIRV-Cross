@@ -32,4 +32,3 @@ void main()
     registers.rw.v[gl_GlobalInvocationID.x] = registers.ro.v[gl_GlobalInvocationID.x];
     registers.wo.v[gl_GlobalInvocationID.x] = registers.ro.v[gl_GlobalInvocationID.x];
 }
-

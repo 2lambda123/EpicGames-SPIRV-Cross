@@ -19,4 +19,3 @@ void main()
     float _44 = float(int(2u));
     _10.values[gl_GlobalInvocationID.x] = ((((_10.values[gl_GlobalInvocationID.x] + vec4(2.0)) + _39.xyzz) * _42) * _43) * _44;
 }
-

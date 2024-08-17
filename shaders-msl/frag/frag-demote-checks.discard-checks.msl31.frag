@@ -30,4 +30,3 @@ vec4 frag_body() {
 void main() {
 	fragColor = frag_body();
 }
-

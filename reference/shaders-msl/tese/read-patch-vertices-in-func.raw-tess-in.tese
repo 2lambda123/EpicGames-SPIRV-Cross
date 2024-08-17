@@ -23,4 +23,3 @@ float4 read_patch_vertices(thread uint& gl_PatchVerticesIn)
     out.gl_Position = read_patch_vertices(gl_PatchVerticesIn);
     return out;
 }
-

@@ -11,4 +11,3 @@ layout(push_constant) uniform PushConst {
 void main() {
     uint i = imageAtomicAdd(kTextures2D[pc.texture0], ivec2(0, 0), 1);
 }
-

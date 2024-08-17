@@ -38,4 +38,3 @@ kernel void main0(constant Registers& registers [[buffer(0)]], uint3 gl_GlobalIn
     pos.y = fma(0.5, sin(fma(6.283125400543212890625, _70, 0.300000011920928955078125)), pos.y);
     registers.references->buffers[gl_WorkGroupID.z]->positions[((local_offset.y * 8u) * gl_NumWorkGroups.x) + local_offset.x] = (pos / fma(float2(8.0), float2(gl_NumWorkGroups.xy), float2(-1.0))) - float2(0.5);
 }
-

@@ -23,4 +23,3 @@ kernel void main0(device SSBO& _10 [[buffer(0)]], uint3 gl_GlobalInvocationID [[
 {
     _10.values[gl_GlobalInvocationID.x] = ((((_10.values[gl_GlobalInvocationID.x] + float4(2.0)) + float3(_38).xyzz) * float(_6)) * float(_7)) * float(int(2u));
 }
-

@@ -15,4 +15,3 @@ struct main0_out
     out.gl_Position = float4(float(gl_PatchVerticesIn), 0.0, 0.0, 1.0);
     return out;
 }
-

@@ -57,4 +57,3 @@ void main()
     uint64_t uptr = uint64_t(_50.head2.next);
     Node unode = Node(uptr);
 }
-

@@ -62,4 +62,3 @@ kernel void main0(device void* spvBufferAliasSet0Binding1 [[buffer(0)]])
     int sudotaddsat_int = int(addsat(reduce_add(int4(short4(comp3.x)) * int4(comp3.y)), comp3.acc));
     uint sudotaddsat_uint = uint(addsat(reduce_add(int4(short4(comp3.x)) * int4(comp3.y)), comp3.acc));
 }
-

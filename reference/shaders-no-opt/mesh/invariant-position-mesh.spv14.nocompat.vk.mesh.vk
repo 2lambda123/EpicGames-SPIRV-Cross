@@ -16,4 +16,3 @@ void main()
     gl_MeshVerticesEXT[2].gl_Position = vec4(1.0);
     gl_PrimitiveTriangleIndicesEXT[0] = uvec3(0u, 1u, 2u);
 }
-

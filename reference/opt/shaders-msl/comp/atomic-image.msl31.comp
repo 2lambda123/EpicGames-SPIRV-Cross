@@ -70,4 +70,3 @@ kernel void main0(device SSBO& ssbo [[buffer(0)]], texture2d<uint, access::read_
         _107 = 10;
     } while (!atomic_compare_exchange_weak_explicit((device atomic_int*)&ssbo.i32, &_107, 2, memory_order_relaxed, memory_order_relaxed) && _107 == 10);
 }
-

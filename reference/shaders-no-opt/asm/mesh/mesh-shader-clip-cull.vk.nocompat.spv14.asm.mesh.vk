@@ -32,4 +32,3 @@ void main()
         gl_PrimitiveTriangleIndicesEXT[gl_LocalInvocationIndex] = uvec3(gl_LocalInvocationIndex, gl_LocalInvocationIndex + 1u, gl_LocalInvocationIndex + 2u);
     }
 }
-

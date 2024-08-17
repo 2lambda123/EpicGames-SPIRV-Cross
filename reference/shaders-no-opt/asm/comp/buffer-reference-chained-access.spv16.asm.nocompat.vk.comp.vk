@@ -17,4 +17,3 @@ void main()
 {
     registers.s.data[gl_GlobalInvocationID.x][gl_LocalInvocationIndex] = 40.0;
 }
-
