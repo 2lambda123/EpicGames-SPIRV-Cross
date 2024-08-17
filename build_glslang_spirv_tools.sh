@@ -16,13 +16,13 @@ echo "Building glslang."
 mkdir -p external/glslang-build
 cd external/glslang-build || exit
 cmake ../glslang -DCMAKE_BUILD_TYPE="$PROFILE" -DCMAKE_INSTALL_PREFIX=output -DENABLE_OPT=OFF
-cmake --build . --config "$PROFILE" --target install "${NPROC}"
+cmake --build . --config "$PROFILE" --target install "$NPROC"
 cd ../..
 
 echo "Building SPIRV-Tools."
 mkdir -p external/spirv-tools-build
 cd external/spirv-tools-build || exit
 cmake ../spirv-tools -DCMAKE_BUILD_TYPE="$PROFILE" -DSPIRV_WERROR=OFF -DCMAKE_INSTALL_PREFIX=output
-cmake --build . --config "$PROFILE" --target install "${NPROC}"
+cmake --build . --config "$PROFILE" --target install "$NPROC"
 cd ../..
 
