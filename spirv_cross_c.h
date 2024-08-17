@@ -61,9 +61,9 @@ extern "C"
 #endif
 
 	/*
- * Gets the SPVC_C_API_VERSION_* used to build this library.
- * Can be used to check for ABI mismatch if so-versioning did not catch it.
- */
+* Gets the SPVC_C_API_VERSION_* used to build this library.
+* Can be used to check for ABI mismatch if so-versioning did not catch it.
+*/
 	SPVC_PUBLIC_API void spvc_get_version(unsigned *major, unsigned *minor, unsigned *patch);
 
 	/* Gets a human readable version string to identify which commit a particular binary was created from. */
@@ -82,9 +82,9 @@ extern "C"
 	typedef const struct spvc_set_s *spvc_set;
 
 	/*
- * Shallow typedefs. All SPIR-V IDs are plain 32-bit numbers, but this helps communicate which data is used.
- * Maps to a SPIRType.
- */
+* Shallow typedefs. All SPIR-V IDs are plain 32-bit numbers, but this helps communicate which data is used.
+* Maps to a SPIRType.
+*/
 	typedef SpvId spvc_type_id;
 	/* Maps to a SPIRVariable. */
 	typedef SpvId spvc_variable_id;
@@ -154,10 +154,10 @@ extern "C"
 	} spvc_hlsl_vertex_attribute_remap;
 
 	/*
- * Be compatible with non-C99 compilers, which do not have stdbool.
- * Only recent MSVC compilers supports this for example, and ideally SPIRV-Cross should be linkable
- * from a wide range of compilers in its C wrapper.
- */
+* Be compatible with non-C99 compilers, which do not have stdbool.
+* Only recent MSVC compilers supports this for example, and ideally SPIRV-Cross should be linkable
+* from a wide range of compilers in its C wrapper.
+*/
 	typedef unsigned char spvc_bool;
 #define SPVC_TRUE ((spvc_bool)1)
 #define SPVC_FALSE ((spvc_bool)0)
@@ -188,10 +188,10 @@ extern "C"
 		SPVC_CAPTURE_MODE_COPY = 0,
 
 		/*
-     * The payload will now be owned by the compiler.
-     * parsed_ir should now be considered a dead blob and must not be used further.
-     * This is optimal for performance and should be the go-to option.
-     */
+    * The payload will now be owned by the compiler.
+    * parsed_ir should now be considered a dead blob and must not be used further.
+    * This is optimal for performance and should be the go-to option.
+    */
 		SPVC_CAPTURE_MODE_TAKE_OWNERSHIP = 1,
 
 		SPVC_CAPTURE_MODE_INT_MAX = 0x7fffffff
@@ -333,8 +333,8 @@ extern "C"
 	} spvc_msl_vertex_attribute;
 
 	/*
- * Initializes the vertex attribute struct.
- */
+* Initializes the vertex attribute struct.
+*/
 	SPVC_PUBLIC_API void spvc_msl_vertex_attribute_init(spvc_msl_vertex_attribute *attr);
 
 	/* Maps to C++ API. Deprecated; use spvc_msl_shader_interface_var_2. */
@@ -347,13 +347,13 @@ extern "C"
 	} spvc_msl_shader_interface_var, spvc_msl_shader_input;
 
 	/*
- * Initializes the shader input struct.
- * Deprecated. Use spvc_msl_shader_interface_var_init_2().
- */
+* Initializes the shader input struct.
+* Deprecated. Use spvc_msl_shader_interface_var_init_2().
+*/
 	SPVC_PUBLIC_API void spvc_msl_shader_interface_var_init(spvc_msl_shader_interface_var *var);
 	/*
- * Deprecated. Use spvc_msl_shader_interface_var_init_2().
- */
+* Deprecated. Use spvc_msl_shader_interface_var_init_2().
+*/
 	SPVC_PUBLIC_API void spvc_msl_shader_input_init(spvc_msl_shader_input *input);
 
 	/* Maps to C++ API. */
@@ -377,8 +377,8 @@ extern "C"
 	} spvc_msl_shader_interface_var_2;
 
 	/*
- * Initializes the shader interface variable struct.
- */
+* Initializes the shader interface variable struct.
+*/
 	SPVC_PUBLIC_API void spvc_msl_shader_interface_var_init_2(spvc_msl_shader_interface_var_2 *var);
 
 	/* Maps to C++ API. */
@@ -393,9 +393,9 @@ extern "C"
 	} spvc_msl_resource_binding;
 
 	/*
- * Initializes the resource binding struct.
- * The defaults are non-zero.
- */
+* Initializes the resource binding struct.
+* The defaults are non-zero.
+*/
 	SPVC_PUBLIC_API void spvc_msl_resource_binding_init(spvc_msl_resource_binding *binding);
 
 #define SPVC_MSL_PUSH_CONSTANT_DESC_SET (~(0u))
@@ -540,9 +540,9 @@ extern "C"
 	} spvc_msl_constexpr_sampler;
 
 	/*
- * Initializes the constexpr sampler struct.
- * The defaults are non-zero.
- */
+* Initializes the constexpr sampler struct.
+* The defaults are non-zero.
+*/
 	SPVC_PUBLIC_API void spvc_msl_constexpr_sampler_init(spvc_msl_constexpr_sampler *sampler);
 
 	/* Maps to the sampler Y'CbCr conversion-related portions of MSLConstexprSampler. See C++ API for defaults and details. */
@@ -560,9 +560,9 @@ extern "C"
 	} spvc_msl_sampler_ycbcr_conversion;
 
 	/*
- * Initializes the constexpr sampler struct.
- * The defaults are non-zero.
- */
+* Initializes the constexpr sampler struct.
+* The defaults are non-zero.
+*/
 	SPVC_PUBLIC_API void spvc_msl_sampler_ycbcr_conversion_init(spvc_msl_sampler_ycbcr_conversion *conv);
 
 	/* Maps to C++ API. */
@@ -598,9 +598,9 @@ extern "C"
 	} spvc_hlsl_resource_binding;
 
 	/*
- * Initializes the resource binding struct.
- * The defaults are non-zero.
- */
+* Initializes the resource binding struct.
+* The defaults are non-zero.
+*/
 	SPVC_PUBLIC_API void spvc_hlsl_resource_binding_init(spvc_hlsl_resource_binding *binding);
 
 	/* Maps to the various spirv_cross::Compiler*::Option structures. See C++ API for defaults and details. */
@@ -734,12 +734,12 @@ extern "C"
 	} spvc_compiler_option;
 
 	/*
- * Context is the highest-level API construct.
- * The context owns all memory allocations made by its child object hierarchy, including various non-opaque structs and strings.
- * This means that the API user only has to care about one "destroy" call ever when using the C API.
- * All pointers handed out by the APIs are only valid as long as the context
- * is alive and spvc_context_release_allocations has not been called.
- */
+* Context is the highest-level API construct.
+* The context owns all memory allocations made by its child object hierarchy, including various non-opaque structs and strings.
+* This means that the API user only has to care about one "destroy" call ever when using the C API.
+* All pointers handed out by the APIs are only valid as long as the context
+* is alive and spvc_context_release_allocations has not been called.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_context_create(spvc_context *context);
 
 	/* Frees all memory allocations and objects associated with the context and its child objects. */
@@ -760,9 +760,9 @@ extern "C"
 	                                                     spvc_parsed_ir *parsed_ir);
 
 	/*
- * Create a compiler backend. Capture mode controls if we construct by copy or move semantics.
- * It is always recommended to use SPVC_CAPTURE_MODE_TAKE_OWNERSHIP if you only intend to cross-compile the IR once.
- */
+* Create a compiler backend. Capture mode controls if we construct by copy or move semantics.
+* It is always recommended to use SPVC_CAPTURE_MODE_TAKE_OWNERSHIP if you only intend to cross-compile the IR once.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_context_create_compiler(spvc_context context, spvc_backend backend,
 	                                                         spvc_parsed_ir parsed_ir, spvc_capture_mode mode,
 	                                                         spvc_compiler *compiler);
@@ -799,9 +799,9 @@ extern "C"
 	SPVC_PUBLIC_API spvc_result spvc_compiler_mask_stage_output_by_builtin(spvc_compiler compiler, SpvBuiltIn builtin);
 
 	/*
- * HLSL specifics.
- * Maps to C++ API.
- */
+* HLSL specifics.
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_compiler_hlsl_set_root_constants_layout(
 	    spvc_compiler compiler, const spvc_hlsl_root_constants *constant_info, size_t count);
 	SPVC_PUBLIC_API spvc_result spvc_compiler_hlsl_add_vertex_attribute_remap(
@@ -817,9 +817,9 @@ extern "C"
 	                                                              unsigned set, unsigned binding);
 
 	/*
- * MSL specifics.
- * Maps to C++ API.
- */
+* MSL specifics.
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_bool spvc_compiler_msl_is_rasterization_disabled(spvc_compiler compiler);
 
 	/* Obsolete. Renamed to needs_swizzle_buffer. */
@@ -887,9 +887,9 @@ extern "C"
 	SPVC_PUBLIC_API const char *spvc_compiler_msl_get_combined_sampler_suffix(spvc_compiler compiler);
 
 	/*
- * Reflect resources.
- * Maps almost 1:1 to C++ API.
- */
+* Reflect resources.
+* Maps almost 1:1 to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_compiler_get_active_interface_variables(spvc_compiler compiler, spvc_set *set);
 	SPVC_PUBLIC_API spvc_result spvc_compiler_set_enabled_interface_variables(spvc_compiler compiler, spvc_set set);
 	SPVC_PUBLIC_API spvc_result spvc_compiler_create_shader_resources(spvc_compiler compiler,
@@ -907,9 +907,9 @@ extern "C"
 	    const spvc_reflected_builtin_resource **resource_list, size_t *resource_size);
 
 	/*
- * Decorations.
- * Maps to C++ API.
- */
+* Decorations.
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API void spvc_compiler_set_decoration(spvc_compiler compiler, SpvId id, SpvDecoration decoration,
 	                                                  unsigned argument);
 	SPVC_PUBLIC_API void spvc_compiler_set_decoration_string(spvc_compiler compiler, SpvId id, SpvDecoration decoration,
@@ -943,9 +943,9 @@ extern "C"
 	                                                          unsigned member_index);
 
 	/*
- * Entry points.
- * Maps to C++ API.
- */
+* Entry points.
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_compiler_get_entry_points(spvc_compiler compiler,
 	                                                           const spvc_entry_point **entry_points,
 	                                                           size_t *num_entry_points);
@@ -970,15 +970,15 @@ extern "C"
 	                                                           SpvStorageClass storage);
 
 	/*
- * Type query interface.
- * Maps to C++ API, except it's read-only.
- */
+* Type query interface.
+* Maps to C++ API, except it's read-only.
+*/
 	SPVC_PUBLIC_API spvc_type spvc_compiler_get_type_handle(spvc_compiler compiler, spvc_type_id id);
 
 	/* Pulls out SPIRType::self. This effectively gives the type ID without array or pointer qualifiers.
- * This is necessary when reflecting decoration/name information on members of a struct,
- * which are placed in the base type, not the qualified type.
- * This is similar to spvc_reflected_resource::base_type_id. */
+* This is necessary when reflecting decoration/name information on members of a struct,
+* which are placed in the base type, not the qualified type.
+* This is similar to spvc_reflected_resource::base_type_id. */
 	SPVC_PUBLIC_API spvc_type_id spvc_type_get_base_type_id(spvc_type type);
 
 	SPVC_PUBLIC_API spvc_basetype spvc_type_get_basetype(spvc_type type);
@@ -1003,9 +1003,9 @@ extern "C"
 	SPVC_PUBLIC_API SpvAccessQualifier spvc_type_get_image_access_qualifier(spvc_type type);
 
 	/*
- * Buffer layout query.
- * Maps to C++ API.
- */
+* Buffer layout query.
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_compiler_get_declared_struct_size(spvc_compiler compiler, spvc_type struct_type,
 	                                                                   size_t *size);
 	SPVC_PUBLIC_API spvc_result spvc_compiler_get_declared_struct_size_runtime_array(spvc_compiler compiler,
@@ -1022,9 +1022,9 @@ extern "C"
 	                                                                           unsigned index, unsigned *stride);
 
 	/*
- * Workaround helper functions.
- * Maps to C++ API.
- */
+* Workaround helper functions.
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_compiler_build_dummy_sampler_for_combined_images(spvc_compiler compiler,
 	                                                                                  spvc_variable_id *id);
 	SPVC_PUBLIC_API spvc_result spvc_compiler_build_combined_image_samplers(spvc_compiler compiler);
@@ -1033,9 +1033,9 @@ extern "C"
 	                                                                      size_t *num_samplers);
 
 	/*
- * Constants
- * Maps to C++ API.
- */
+* Constants
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_compiler_get_specialization_constants(
 	    spvc_compiler compiler, const spvc_specialization_constant **constants, size_t *num_constants);
 	SPVC_PUBLIC_API spvc_constant spvc_compiler_get_constant_handle(spvc_compiler compiler, spvc_constant_id id);
@@ -1045,19 +1045,19 @@ extern "C"
 	    spvc_specialization_constant *z);
 
 	/*
- * Buffer ranges
- * Maps to C++ API.
- */
+* Buffer ranges
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_result spvc_compiler_get_active_buffer_ranges(spvc_compiler compiler, spvc_variable_id id,
 	                                                                   const spvc_buffer_range **ranges,
 	                                                                   size_t *num_ranges);
 
 	/*
- * No stdint.h until C99, sigh :(
- * For smaller types, the result is sign or zero-extended as appropriate.
- * Maps to C++ API.
- * TODO: The SPIRConstant query interface and modification interface is not quite complete.
- */
+* No stdint.h until C99, sigh :(
+* For smaller types, the result is sign or zero-extended as appropriate.
+* Maps to C++ API.
+* TODO: The SPIRConstant query interface and modification interface is not quite complete.
+*/
 	SPVC_PUBLIC_API float spvc_constant_get_scalar_fp16(spvc_constant constant, unsigned column, unsigned row);
 	SPVC_PUBLIC_API float spvc_constant_get_scalar_fp32(spvc_constant constant, unsigned column, unsigned row);
 	SPVC_PUBLIC_API double spvc_constant_get_scalar_fp64(spvc_constant constant, unsigned column, unsigned row);
@@ -1075,8 +1075,8 @@ extern "C"
 	SPVC_PUBLIC_API spvc_type_id spvc_constant_get_type(spvc_constant constant);
 
 	/*
- * C implementation of the C++ api.
- */
+* C implementation of the C++ api.
+*/
 	SPVC_PUBLIC_API void spvc_constant_set_scalar_fp16(spvc_constant constant, unsigned column, unsigned row,
 	                                                   unsigned short value);
 	SPVC_PUBLIC_API void spvc_constant_set_scalar_fp32(spvc_constant constant, unsigned column, unsigned row,
@@ -1100,9 +1100,9 @@ extern "C"
 	                                                 signed char value);
 
 	/*
- * Misc reflection
- * Maps to C++ API.
- */
+* Misc reflection
+* Maps to C++ API.
+*/
 	SPVC_PUBLIC_API spvc_bool spvc_compiler_get_binary_offset_for_decoration(spvc_compiler compiler,
 	                                                                         spvc_variable_id id,
 	                                                                         SpvDecoration decoration,

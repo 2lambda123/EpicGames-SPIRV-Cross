@@ -54,7 +54,7 @@ def remove_file(path):
 def create_temporary(suff=""):
     """
 
-    :param suff:  (Default value = "")
+    :param suff: Default value = "")
 
     """
     f, path = tempfile.mkstemp(suffix=suff)
@@ -280,7 +280,7 @@ ignore_win_metal_tool = False
 def validate_shader_msl(shader, opt):
     """
 
-    :param shader:
+    :param shader: param opt:
     :param opt:
 
     """
@@ -337,11 +337,11 @@ def validate_shader_msl(shader, opt):
 def cross_compile_msl(shader, spirv, opt, iterations, paths):
     """
 
-    :param shader:
-    :param spirv:
-    :param opt:
-    :param iterations:
+    :param shader: param spirv:
+    :param opt: param iterations:
     :param paths:
+    :param spirv:
+    :param iterations:
 
     """
     spirv_path = create_temporary()
@@ -639,9 +639,9 @@ ignore_fxc = False
 def validate_shader_hlsl(shader, force_no_external_validation, paths):
     """
 
-    :param shader:
-    :param force_no_external_validation:
+    :param shader: param force_no_external_validation:
     :param paths:
+    :param force_no_external_validation:
 
     """
     test_glslang = True
@@ -714,11 +714,11 @@ def cross_compile_hlsl(shader, spirv, opt, force_no_external_validation,
                        iterations, paths):
     """
 
-    :param shader:
+    :param shader: param spirv:
+    :param opt: param force_no_external_validation:
+    :param iterations: param paths:
     :param spirv:
-    :param opt:
     :param force_no_external_validation:
-    :param iterations:
     :param paths:
 
     """
@@ -827,11 +827,11 @@ def cross_compile_hlsl(shader, spirv, opt, force_no_external_validation,
 def cross_compile_reflect(shader, spirv, opt, iterations, paths):
     """
 
-    :param shader:
-    :param spirv:
-    :param opt:
-    :param iterations:
+    :param shader: param spirv:
+    :param opt: param iterations:
     :param paths:
+    :param spirv:
+    :param iterations:
 
     """
     spirv_path = create_temporary()
@@ -887,9 +887,9 @@ def cross_compile_reflect(shader, spirv, opt, iterations, paths):
 def validate_shader(shader, vulkan, paths):
     """
 
-    :param shader:
-    :param vulkan:
+    :param shader: param vulkan:
     :param paths:
+    :param vulkan:
 
     """
     if vulkan:
@@ -920,19 +920,19 @@ def cross_compile(
 ):
     """
 
-    :param shader:
+    :param shader: param vulkan:
+    :param spirv: param invalid_spirv:
+    :param eliminate: param is_legacy:
+    :param force_es: param flatten_ubo:
+    :param sso: param flatten_dim:
+    :param opt: param push_ubo:
+    :param iterations: param paths:
     :param vulkan:
-    :param spirv:
     :param invalid_spirv:
-    :param eliminate:
     :param is_legacy:
-    :param force_es:
     :param flatten_ubo:
-    :param sso:
     :param flatten_dim:
-    :param opt:
     :param push_ubo:
-    :param iterations:
     :param paths:
 
     """
@@ -1106,9 +1106,9 @@ def make_reference_dir(path):
 def reference_path(directory, relpath, opt):
     """
 
-    :param directory:
-    :param relpath:
+    :param directory: param relpath:
     :param opt:
+    :param relpath:
 
     """
     split_paths = os.path.split(directory)
@@ -1121,9 +1121,9 @@ def reference_path(directory, relpath, opt):
 def regression_check_reflect(shader, json_file, args):
     """
 
-    :param shader:
-    :param json_file:
+    :param shader: param json_file:
     :param args:
+    :param json_file:
 
     """
     reference = reference_path(shader[0], shader[1], args.opt) + ".json"
@@ -1180,7 +1180,7 @@ def regression_check_reflect(shader, json_file, args):
 def generate_diff_file(origin, generated):
     """
 
-    :param origin:
+    :param origin: param generated:
     :param generated:
 
     """
@@ -1200,9 +1200,9 @@ def generate_diff_file(origin, generated):
 def regression_check(shader, glsl, args):
     """
 
-    :param shader:
-    :param glsl:
+    :param shader: param glsl:
     :param args:
+    :param glsl:
 
     """
     reference = reference_path(shader[0], shader[1], args.opt)
@@ -1365,9 +1365,9 @@ def shader_is_push_ubo(shader):
 def test_shader(stats, shader, args, paths):
     """
 
-    :param stats:
+    :param stats: param shader:
+    :param args: param paths:
     :param shader:
-    :param args:
     :param paths:
 
     """
@@ -1429,9 +1429,9 @@ def test_shader(stats, shader, args, paths):
 def test_shader_msl(stats, shader, args, paths):
     """
 
-    :param stats:
+    :param stats: param shader:
+    :param args: param paths:
     :param shader:
-    :param args:
     :param paths:
 
     """
@@ -1478,9 +1478,9 @@ def test_shader_msl(stats, shader, args, paths):
 def test_shader_hlsl(stats, shader, args, paths):
     """
 
-    :param stats:
+    :param stats: param shader:
+    :param args: param paths:
     :param shader:
-    :param args:
     :param paths:
 
     """
@@ -1503,9 +1503,9 @@ def test_shader_hlsl(stats, shader, args, paths):
 def test_shader_reflect(stats, shader, args, paths):
     """
 
-    :param stats:
+    :param stats: param shader:
+    :param args: param paths:
     :param shader:
-    :param args:
     :param paths:
 
     """
@@ -1523,9 +1523,9 @@ def test_shader_reflect(stats, shader, args, paths):
 def test_shader_file(relpath, stats, args, backend):
     """
 
-    :param relpath:
+    :param relpath: param stats:
+    :param args: param backend:
     :param stats:
-    :param args:
     :param backend:
 
     """
@@ -1548,9 +1548,9 @@ def test_shader_file(relpath, stats, args, backend):
 def test_shaders_helper(stats, backend, args):
     """
 
-    :param stats:
-    :param backend:
+    :param stats: param backend:
     :param args:
+    :param backend:
 
     """
     all_files = []
@@ -1592,7 +1592,7 @@ def test_shaders_helper(stats, backend, args):
 def test_shaders(backend, args):
     """
 
-    :param backend:
+    :param backend: param args:
     :param args:
 
     """
