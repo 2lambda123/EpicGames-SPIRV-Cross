@@ -1616,26 +1616,22 @@ def main():
     parser.add_argument(
         "--update",
         action="store_true",
-        help=
-        "Updates reference files if there is a mismatch. Use when legitimate changes in output is found.",
+        help="Updates reference files if there is a mismatch. Use when legitimate changes in output is found.",
     )
     parser.add_argument(
         "--keep",
         action="store_true",
-        help=
-        "Leave failed GLSL shaders on disk if they fail regression. Useful for debugging.",
+        help="Leave failed GLSL shaders on disk if they fail regression. Useful for debugging.",
     )
     parser.add_argument(
         "--diff",
         action="store_true",
-        help=
-        "Displays a diff instead of the generated output on failure. Useful for debugging.",
+        help="Displays a diff instead of the generated output on failure. Useful for debugging.",
     )
     parser.add_argument(
         "--malisc",
         action="store_true",
-        help=
-        "Use malisc offline compiler to determine static cycle counts before and after spirv-cross.",
+        help="Use malisc offline compiler to determine static cycle counts before and after spirv-cross.",
     )
     parser.add_argument("--msl",
                         action="store_true",
@@ -1664,8 +1660,7 @@ def main():
     parser.add_argument(
         "--parallel",
         action="store_true",
-        help=
-        "Execute tests in parallel.  Useful for doing regression quickly, but bad for debugging and stat output.",
+        help="Execute tests in parallel.  Useful for doing regression quickly, but bad for debugging and stat output.",
     )
     parser.add_argument("--spirv-cross",
                         default="./spirv-cross",
