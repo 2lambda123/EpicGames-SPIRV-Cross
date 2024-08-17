@@ -627,7 +627,29 @@ bool Compiler::is_matrix(const SPIRType &type) const
 
 bool Compiler::is_array(const SPIRType &type) const
 {
-	return !type.array.empty();
+	return type.op == OpTypeArray || type.op == OpTypeRuntimeArray;
+}
+
+bool Compiler::is_pointer(const SPIRType &type) const
+{
+	return type.op == OpTypePointer && type.basetype != SPIRType::Unknown; // Ignore function pointers.
+}
+
+bool Compiler::is_physical_pointer(const SPIRType &type) const
+{
+	return type.op == OpTypePointer && type.storage == StorageClassPhysicalStorageBuffer;
+}
+
+bool Compiler::is_physical_pointer_to_buffer_block(const SPIRType &type) const
+{
+	return is_physical_pointer(type) && get_pointee_type(type).self == type.parent_type &&
+	       (has_decoration(type.self, DecorationBlock) ||
+	        has_decoration(type.self, DecorationBufferBlock));
+}
+
+bool Compiler::is_runtime_size_array(const SPIRType &type)
+{
+	return type.op == OpTypeRuntimeArray;
 }
 
 ShaderResources Compiler::get_shader_resources() const
@@ -995,57 +1017,70 @@ ShaderResources Compiler::get_shader_resources(const unordered_set<VariableID> *
 		{
 			res.shader_record_buffers.push_back({ var.self, var.basetype, type.self, get_remapped_declared_block_name(var.self, ssbo_instance_name) });
 		}
-		// Images
-		else if (type.storage == StorageClassUniformConstant && type.basetype == SPIRType::Image &&
-		         type.image.sampled == 2)
-		{
-			res.storage_images.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
-		}
-		// Separate images
-		else if (type.storage == StorageClassUniformConstant && type.basetype == SPIRType::Image &&
-		         type.image.sampled == 1)
-		{
-			res.separate_images.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
-		}
-		// Separate samplers
-		else if (type.storage == StorageClassUniformConstant && type.basetype == SPIRType::Sampler)
-		{
-			res.separate_samplers.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
-		}
-		// Textures
-		else if (type.storage == StorageClassUniformConstant && type.basetype == SPIRType::SampledImage)
-		{
-			res.sampled_images.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
-		}
 		// Atomic counters
 		else if (type.storage == StorageClassAtomicCounter)
 		{
 			res.atomic_counters.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
 		}
-		// Acceleration structures
-		else if (type.storage == StorageClassUniformConstant && type.basetype == SPIRType::AccelerationStructure)
+		else if (type.storage == StorageClassUniformConstant)
 		{
-			res.acceleration_structures.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
+			if (type.basetype == SPIRType::Image)
+			{
+				// Images
+				if (type.image.sampled == 2)
+				{
+					res.storage_images.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
+				}
+				// Separate images
+				else if (type.image.sampled == 1)
+				{
+					res.separate_images.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
+				}
+			}
+			// Separate samplers
+			else if (type.basetype == SPIRType::Sampler)
+			{
+				res.separate_samplers.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
+			}
+			// Textures
+			else if (type.basetype == SPIRType::SampledImage)
+			{
+				res.sampled_images.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
+			}
+			// Acceleration structures
+			else if (type.basetype == SPIRType::AccelerationStructure)
+			{
+				res.acceleration_structures.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
+			}
+			else
+			{
+				res.gl_plain_uniforms.push_back({ var.self, var.basetype, type.self, get_name(var.self) });
+			}
 		}
 	});
 
 	return res;
 }
 
-bool Compiler::type_is_block_like(const SPIRType &type) const
+bool Compiler::type_is_top_level_block(const SPIRType &type) const
 {
 	if (type.basetype != SPIRType::Struct)
 		return false;
+	return has_decoration(type.self, DecorationBlock) || has_decoration(type.self, DecorationBufferBlock);
+}
 
-	if (has_decoration(type.self, DecorationBlock) || has_decoration(type.self, DecorationBufferBlock))
-	{
+bool Compiler::type_is_block_like(const SPIRType &type) const
+{
+	if (type_is_top_level_block(type))
 		return true;
-	}
 
-	// Block-like types may have Offset decorations.
-	for (uint32_t i = 0; i < uint32_t(type.member_types.size()); i++)
-		if (has_member_decoration(type.self, i, DecorationOffset))
-			return true;
+	if (type.basetype == SPIRType::Struct)
+	{
+		// Block-like types may have Offset decorations.
+		for (uint32_t i = 0; i < uint32_t(type.member_types.size()); i++)
+			if (has_member_decoration(type.self, i, DecorationOffset))
+				return true;
+	}
 
 	return false;
 }
@@ -1192,7 +1227,7 @@ const SPIRType &Compiler::get_pointee_type(uint32_t type_id) const
 
 uint32_t Compiler::get_variable_data_type_id(const SPIRVariable &var) const
 {
-	if (var.phi_variable)
+	if (var.phi_variable || var.storage == spv::StorageClass::StorageClassAtomicCounter)
 		return var.basetype;
 	return get_pointee_type_id(var.basetype);
 }
@@ -2717,8 +2752,8 @@ void Compiler::CombinedImageSamplerHandler::register_combined_image_sampler(SPIR
 		auto ptr_type_id = id + 1;
 		auto combined_id = id + 2;
 		auto &base = compiler.expression_type(image_id);
-		auto &type = compiler.set<SPIRType>(type_id);
-		auto &ptr_type = compiler.set<SPIRType>(ptr_type_id);
+		auto &type = compiler.set<SPIRType>(type_id, OpTypeSampledImage);
+		auto &ptr_type = compiler.set<SPIRType>(ptr_type_id, OpTypePointer);
 
 		type = base;
 		type.self = type_id;
@@ -2775,6 +2810,14 @@ bool Compiler::DummySamplerForCombinedImageHandler::handle(Op opcode, const uint
 		auto &type = compiler.get<SPIRType>(result_type);
 		bool separate_image =
 		    type.basetype == SPIRType::Image && type.image.sampled == 1 && type.image.dim != DimBuffer;
+
+		// UE Change Begin: Enable textureBuffer over samplerBuffer.
+		if (type.basetype == SPIRType::Image && type.image.sampled == 1 && type.image.dim == DimBuffer)
+		{
+			need_dummy_sampler = true;
+			return true;
+		}
+		// UE Change End: Enable textureBuffer over samplerBuffer.
 
 		// If not separate image, don't bother.
 		if (!separate_image)
@@ -2964,10 +3007,14 @@ bool Compiler::CombinedImageSamplerHandler::handle(Op opcode, const uint32_t *ar
 	VariableID image_id = remap_parameter(args[2]);
 	VariableID sampler_id = is_fetch ? compiler.dummy_sampler_id : remap_parameter(args[3]);
 
-	auto itr = find_if(begin(compiler.combined_image_samplers), end(compiler.combined_image_samplers),
-	                   [image_id, sampler_id](const CombinedImageSampler &combined) {
-		                   return combined.image_id == image_id && combined.sampler_id == sampler_id;
-	                   });
+	// UE Change Begin: For OpenGL based platforms we merge all samplers to a single sampler per texture.
+	bool only_match_image_id = single_sampler_per_texture;
+	auto itr =
+	    find_if(begin(compiler.combined_image_samplers), end(compiler.combined_image_samplers),
+	            [image_id, sampler_id, only_match_image_id](const CombinedImageSampler &combined) {
+		            return combined.image_id == image_id && (combined.sampler_id == sampler_id || only_match_image_id);
+	            });
+	// UE Change End: For OpenGL based platforms we merge all samplers to a single sampler per texture.
 
 	if (itr == end(compiler.combined_image_samplers))
 	{
@@ -2977,7 +3024,7 @@ bool Compiler::CombinedImageSamplerHandler::handle(Op opcode, const uint32_t *ar
 		{
 			// Have to invent the sampled image type.
 			sampled_type = compiler.ir.increase_bound_by(1);
-			auto &type = compiler.set<SPIRType>(sampled_type);
+			auto &type = compiler.set<SPIRType>(sampled_type, OpTypeSampledImage);
 			type = compiler.expression_type(args[2]);
 			type.self = sampled_type;
 			type.basetype = SPIRType::SampledImage;
@@ -2996,7 +3043,7 @@ bool Compiler::CombinedImageSamplerHandler::handle(Op opcode, const uint32_t *ar
 
 		// Make a new type, pointer to OpTypeSampledImage, so we can make a variable of this type.
 		// We will probably have this type lying around, but it doesn't hurt to make duplicates for internal purposes.
-		auto &type = compiler.set<SPIRType>(type_id);
+		auto &type = compiler.set<SPIRType>(type_id, OpTypePointer);
 		auto &base = compiler.get<SPIRType>(sampled_type);
 		type = base;
 		type.pointer = true;
@@ -3027,6 +3074,12 @@ bool Compiler::CombinedImageSamplerHandler::handle(Op opcode, const uint32_t *ar
 
 		compiler.combined_image_samplers.push_back({ combined_id, image_id, sampler_id });
 	}
+	// UE Change Begin: For OpenGL based platforms we merge all samplers to a single sampler per texture.
+	else if (single_sampler_per_texture)
+	{
+		compiler.combined_image_samplers.push_back({ itr->combined_id, image_id, sampler_id });
+	}
+	// UE Change End: For OpenGL based platforms we merge all samplers to a single sampler per texture.
 
 	return true;
 }
@@ -3042,11 +3095,10 @@ VariableID Compiler::build_dummy_sampler_for_combined_images()
 		auto ptr_type_id = offset + 1;
 		auto var_id = offset + 2;
 
-		SPIRType sampler_type;
-		auto &sampler = set<SPIRType>(type_id);
+		auto &sampler = set<SPIRType>(type_id, OpTypeSampler);
 		sampler.basetype = SPIRType::Sampler;
 
-		auto &ptr_sampler = set<SPIRType>(ptr_type_id);
+		auto &ptr_sampler = set<SPIRType>(ptr_type_id, OpTypePointer);
 		ptr_sampler = sampler;
 		ptr_sampler.self = type_id;
 		ptr_sampler.storage = StorageClassUniformConstant;
@@ -3062,7 +3114,8 @@ VariableID Compiler::build_dummy_sampler_for_combined_images()
 		return 0;
 }
 
-void Compiler::build_combined_image_samplers()
+// UE Change Begin: For OpenGL based platforms we merge all samplers to a single sampler per texture
+void Compiler::build_combined_image_samplers(bool single_sampler_per_texture)
 {
 	ir.for_each_typed_id<SPIRFunction>([&](uint32_t, SPIRFunction &func) {
 		func.combined_parameters.clear();
@@ -3071,9 +3124,10 @@ void Compiler::build_combined_image_samplers()
 	});
 
 	combined_image_samplers.clear();
-	CombinedImageSamplerHandler handler(*this);
+	CombinedImageSamplerHandler handler(*this, single_sampler_per_texture);
 	traverse_all_reachable_opcodes(get<SPIRFunction>(ir.default_entry_point), handler);
 }
+// UE Change End: For OpenGL based platforms we merge all samplers to a single sampler per texture
 
 SmallVector<SpecializationConstant> Compiler::get_specialization_constants() const
 {
@@ -3301,13 +3355,11 @@ bool Compiler::AnalyzeVariableScopeAccessHandler::handle_terminator(const SPIRBl
 bool Compiler::AnalyzeVariableScopeAccessHandler::handle(spv::Op op, const uint32_t *args, uint32_t length)
 {
 	// Keep track of the types of temporaries, so we can hoist them out as necessary.
-	uint32_t result_type, result_id;
+	uint32_t result_type = 0, result_id = 0;
 	if (compiler.instruction_to_result_type(result_type, result_id, op, args, length))
 	{
 		// For some opcodes, we will need to override the result id.
 		// If we need to hoist the temporary, the temporary type is the input, not the result.
-		// FIXME: This will likely break with OpCopyObject + hoisting, but we'll have to
-		// solve it if we ever get there ...
 		if (op == OpConvertUToAccelerationStructureKHR)
 		{
 			auto itr = result_id_to_type.find(args[2]);
@@ -3416,6 +3468,13 @@ bool Compiler::AnalyzeVariableScopeAccessHandler::handle(spv::Op op, const uint3
 
 	case OpCopyObject:
 	{
+		// OpCopyObject copies the underlying non-pointer type, 
+		// so any temp variable should be declared using the underlying type.
+		// If the type is a pointer, get its base type and overwrite the result type mapping.
+		auto &type = compiler.get<SPIRType>(result_type);
+		if (type.pointer)
+			result_id_to_type[result_id] = type.parent_type;
+
 		if (length < 3)
 			return false;
 
@@ -4253,6 +4312,12 @@ void Compiler::ActiveBuiltinHandler::handle_builtin(const SPIRType &type, BuiltI
 	{
 		if (decoration_flags.get(DecorationInvariant))
 			compiler.position_invariant = true;
+		// UE Change Begin: Allow precise semantic outputs
+		// When the output semantic is mark as precise add it in the list for post declaration.
+		// Ex; out precise float4 gl_position, will be post declare as precise gl_position;
+		if (decoration_flags.get(DecorationNoContraction))
+			compiler.precise_outputs.push_back(builtin);
+		// UE Change End: Allow precise semantic outputs  
 	}
 }
 
@@ -4771,6 +4836,13 @@ const SmallVector<std::string> &Compiler::get_declared_extensions() const
 	return ir.declared_extensions;
 }
 
+// UE Change Begin: Allow precise semantic outputs
+const SmallVector<spv::BuiltIn> &Compiler::get_precise_outputs() const
+{
+	return precise_outputs;
+}
+// UE Change End: Allow precise semantic outputs
+
 std::string Compiler::get_remapped_declared_block_name(VariableID id) const
 {
 	return get_remapped_declared_block_name(id, false);
@@ -4997,8 +5069,7 @@ void Compiler::PhysicalStorageBufferPointerHandler::mark_aligned_access(uint32_t
 bool Compiler::PhysicalStorageBufferPointerHandler::type_is_bda_block_entry(uint32_t type_id) const
 {
 	auto &type = compiler.get<SPIRType>(type_id);
-	return type.storage == StorageClassPhysicalStorageBufferEXT && type.pointer &&
-	       type.pointer_depth == 1 && !compiler.type_is_array_of_pointers(type);
+	return compiler.is_physical_pointer(type);
 }
 
 uint32_t Compiler::PhysicalStorageBufferPointerHandler::get_minimum_scalar_alignment(const SPIRType &type) const
@@ -5028,7 +5099,8 @@ void Compiler::PhysicalStorageBufferPointerHandler::setup_meta_chain(uint32_t ty
 		access_chain_to_physical_block[var_id] = &meta;
 
 		auto &type = compiler.get<SPIRType>(type_id);
-		if (type.basetype != SPIRType::Struct)
+
+		if (!compiler.is_physical_pointer_to_buffer_block(type))
 			non_block_types.insert(type_id);
 
 		if (meta.alignment == 0)
@@ -5087,9 +5159,7 @@ bool Compiler::PhysicalStorageBufferPointerHandler::handle(Op op, const uint32_t
 uint32_t Compiler::PhysicalStorageBufferPointerHandler::get_base_non_block_type_id(uint32_t type_id) const
 {
 	auto *type = &compiler.get<SPIRType>(type_id);
-	while (type->pointer &&
-	       type->storage == StorageClassPhysicalStorageBufferEXT &&
-	       !type_is_bda_block_entry(type_id))
+	while (compiler.is_physical_pointer(*type) && !type_is_bda_block_entry(type_id))
 	{
 		type_id = type->parent_type;
 		type = &compiler.get<SPIRType>(type_id);
@@ -5104,12 +5174,10 @@ void Compiler::PhysicalStorageBufferPointerHandler::analyze_non_block_types_from
 	for (auto &member : type.member_types)
 	{
 		auto &subtype = compiler.get<SPIRType>(member);
-		if (subtype.basetype != SPIRType::Struct && subtype.pointer &&
-		    subtype.storage == spv::StorageClassPhysicalStorageBufferEXT)
-		{
+
+		if (compiler.is_physical_pointer(subtype) && !compiler.is_physical_pointer_to_buffer_block(subtype))
 			non_block_types.insert(get_base_non_block_type_id(member));
-		}
-		else if (subtype.basetype == SPIRType::Struct && !subtype.pointer)
+		else if (subtype.basetype == SPIRType::Struct && !compiler.is_pointer(subtype))
 			analyze_non_block_types_from_block(subtype);
 	}
 }
@@ -5122,9 +5190,14 @@ void Compiler::analyze_non_block_pointer_types()
 	// Analyze any block declaration we have to make. It might contain
 	// physical pointers to POD types which we never used, and thus never added to the list.
 	// We'll need to add those pointer types to the set of types we declare.
-	ir.for_each_typed_id<SPIRType>([&](uint32_t, SPIRType &type) {
-		if (has_decoration(type.self, DecorationBlock) || has_decoration(type.self, DecorationBufferBlock))
+	ir.for_each_typed_id<SPIRType>([&](uint32_t id, SPIRType &type) {
+		// Only analyze the raw block struct, not any pointer-to-struct, since that's just redundant.
+		if (type.self == id &&
+		    (has_decoration(type.self, DecorationBlock) ||
+		     has_decoration(type.self, DecorationBufferBlock)))
+		{
 			handler.analyze_non_block_types_from_block(type);
+		}
 	});
 
 	physical_storage_non_block_pointer_types.reserve(handler.non_block_types.size());
@@ -5444,9 +5517,39 @@ void Compiler::analyze_interlocked_resource_usage()
 	}
 }
 
+// Helper function
+bool Compiler::check_internal_recursion(const SPIRType &type, std::unordered_set<uint32_t> &checked_ids)
+{
+	if (type.basetype != SPIRType::Struct)
+		return false;
+
+	if (checked_ids.count(type.self))
+		return true;
+
+	// Recurse into struct members
+	bool is_recursive = false;
+	checked_ids.insert(type.self);
+	uint32_t mbr_cnt = uint32_t(type.member_types.size());
+	for (uint32_t mbr_idx = 0; !is_recursive && mbr_idx < mbr_cnt; mbr_idx++)
+	{
+		uint32_t mbr_type_id = type.member_types[mbr_idx];
+		auto &mbr_type = get<SPIRType>(mbr_type_id);
+		is_recursive |= check_internal_recursion(mbr_type, checked_ids);
+	}
+	checked_ids.erase(type.self);
+	return is_recursive;
+}
+
+// Return whether the struct type contains a structural recursion nested somewhere within its content.
+bool Compiler::type_contains_recursion(const SPIRType &type)
+{
+	std::unordered_set<uint32_t> checked_ids;
+	return check_internal_recursion(type, checked_ids);
+}
+
 bool Compiler::type_is_array_of_pointers(const SPIRType &type) const
 {
-	if (!type_is_top_level_array(type))
+	if (!is_array(type))
 		return false;
 
 	// BDA types must have parent type hierarchy.
@@ -5455,45 +5558,10 @@ bool Compiler::type_is_array_of_pointers(const SPIRType &type) const
 
 	// Punch through all array layers.
 	auto *parent = &get<SPIRType>(type.parent_type);
-	while (type_is_top_level_array(*parent))
+	while (is_array(*parent))
 		parent = &get<SPIRType>(parent->parent_type);
 
-	return type_is_top_level_pointer(*parent);
-}
-
-bool Compiler::type_is_top_level_pointer(const SPIRType &type) const
-{
-	if (!type.pointer)
-		return false;
-
-	// Function pointers, should not be hit by valid SPIR-V.
-	// Parent type will be SPIRFunction instead.
-	if (type.basetype == SPIRType::Unknown)
-		return false;
-
-	// Some types are synthesized in-place without complete type hierarchy and might not have parent types,
-	// but these types are never array-of-pointer or any complicated BDA type, infer reasonable defaults.
-	if (type.parent_type)
-		return type.pointer_depth > get<SPIRType>(type.parent_type).pointer_depth;
-	else
-		return true;
-}
-
-bool Compiler::type_is_top_level_physical_pointer(const SPIRType &type) const
-{
-	return type_is_top_level_pointer(type) && type.storage == StorageClassPhysicalStorageBuffer;
-}
-
-bool Compiler::type_is_top_level_array(const SPIRType &type) const
-{
-	if (type.array.empty())
-		return false;
-
-	// If we have pointer and array, we infer pointer-to-array as it's the only meaningful thing outside BDA.
-	if (type.parent_type)
-		return type.array.size() > get<SPIRType>(type.parent_type).array.size();
-	else
-		return !type.pointer;
+	return is_pointer(*parent);
 }
 
 bool Compiler::flush_phi_required(BlockID from, BlockID to) const

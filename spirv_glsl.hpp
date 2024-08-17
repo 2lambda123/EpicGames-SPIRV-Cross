@@ -52,11 +52,23 @@ enum PlsFormat
 	PlsR32UI
 };
 
+// UE Change Begin: Improved support for PLS and FBF
 struct PlsRemap
 {
 	uint32_t id;
+	std::string name;
 	PlsFormat format;
 };
+
+struct PlsInOutRemap
+{
+	uint32_t input_id;
+	std::string input_name;
+	uint32_t output_id;
+	std::string output_name;
+	PlsFormat format;
+};
+// UE Change End: Improved support for PLS and FBF
 
 enum AccessChainFlagBits
 {
@@ -151,8 +163,42 @@ public:
 		// This workaround may cause significant performance degeneration on some Android devices.
 		bool enable_row_major_load_workaround = true;
 
+		// UE Change Begin: Reconstruct global uniforms from $Globals cbuffer
+		bool reconstruct_global_uniforms = false;
+		// UE Change End: Reconstruct global uniforms from $Globals cbuffer
+
 		// If non-zero, controls layout(num_views = N) in; in GL_OVR_multiview2.
 		uint32_t ovr_multiview_view_count = 0;
+
+		// UE Change Begin: Enable buffer blocks to be named after block alias.
+		// Use "type_"+NAME for SSBO block names instead of their original type name.
+		bool emit_ssbo_alias_type_name = false;
+		// UE Change End: Enable buffer blocks to be named after block alias.
+
+		// UE Change Begin: Enable separate texture types via extensions.
+		bool separate_texture_types = false;
+		// UE Change End: Enable separate texture types via extensions.
+
+		// UE Change Begin: Allow disabling block layout for SSBOs and force UBO to std140.
+		bool disable_ssbo_block_layout = false;
+		bool force_ubo_std140_layout = false;
+		// UE Change End: Allow disabling block layout for SSBOs and force UBO to std140.
+
+		// UE Change Begin: Allow disabling explicit binding slots.
+		bool disable_explicit_binding = false;
+		// UE Change End: Allow disabling explicit binding slots.
+
+		// UE Change Begin: Enable textureBuffer over samplerBuffer.
+		bool enable_texture_buffer = false;
+		// UE Change End: Enable textureBuffer over samplerBuffer.
+
+		// UE Change Begin: Emit structure padding to support uniform buffers with offsets
+		bool pad_ubo_blocks = false;
+		// UE Change End: Emit structure padding to support uniform buffers with offsets
+
+		// UE Change Begin: Force Glsl Clipspace when using ES
+		bool force_glsl_clipspace = false;
+		// UE Change End: Force Glsl Clipspace when using ES
 
 		enum Precision
 		{
@@ -190,12 +236,17 @@ public:
 		} fragment;
 	};
 
-	void remap_pixel_local_storage(std::vector<PlsRemap> inputs, std::vector<PlsRemap> outputs)
+	// UE Change Begin: Improved support for PLS and FBF
+	void remap_pixel_local_storage(std::vector<PlsRemap> inputs, std::vector<PlsRemap> outputs, std::vector<PlsInOutRemap> inouts)
 	{
 		pls_inputs = std::move(inputs);
 		pls_outputs = std::move(outputs);
+		pls_inouts = std::move(inouts);
 		remap_pls_variables();
 	}
+
+	static uint32_t pls_format_to_components(PlsFormat format);
+	// UE Change End: Improved support for PLS and FBF
 
 	// Redirect a subpassInput reading from input_attachment_index to instead load its value from
 	// the color attachment at location = color_location. Requires ESSL.
@@ -286,6 +337,14 @@ public:
 	// Masking builtins only takes effect if the builtin in question is part of the stage output interface.
 	void mask_stage_output_by_location(uint32_t location, uint32_t component);
 	void mask_stage_output_by_builtin(spv::BuiltIn builtin);
+
+	// Allow to control how to format float literals in the output.
+	// Set to "nullptr" to use the default "convert_to_string" function.
+	// This handle is not owned by SPIRV-Cross and must remain valid until compile() has been called.
+	void set_float_formatter(FloatFormatter *formatter)
+	{
+		float_formatter = formatter;
+	}
 
 protected:
 	struct ShaderSubgroupSupportHelper
@@ -430,7 +489,7 @@ protected:
 	virtual void emit_struct_member(const SPIRType &type, uint32_t member_type_id, uint32_t index,
 	                                const std::string &qualifier = "", uint32_t base_offset = 0);
 	virtual void emit_struct_padding_target(const SPIRType &type);
-	virtual std::string image_type_glsl(const SPIRType &type, uint32_t id = 0);
+	virtual std::string image_type_glsl(const SPIRType &type, uint32_t id = 0, bool member = false);
 	std::string constant_expression(const SPIRConstant &c,
 	                                bool inside_block_like_struct_scope = false,
 	                                bool inside_struct_scope = false);
@@ -440,6 +499,10 @@ protected:
 	virtual std::string variable_decl(const SPIRType &type, const std::string &name, uint32_t id = 0);
 	virtual bool variable_decl_is_remapped_storage(const SPIRVariable &var, spv::StorageClass storage) const;
 	virtual std::string to_func_call_arg(const SPIRFunction::Parameter &arg, uint32_t id);
+
+	// UE Change Begin: Emit structure padding to support uniform buffers with offsets
+	void emit_struct_member_padding(const SPIRType &type, uint32_t index);
+	// UE Change End: Emit structure padding to support uniform buffers with offsets
 
 	struct TextureFunctionBaseArguments
 	{
@@ -749,7 +812,7 @@ protected:
 	virtual bool access_chain_needs_stage_io_builtin_translation(uint32_t base);
 
 	virtual void check_physical_type_cast(std::string &expr, const SPIRType *type, uint32_t physical_type);
-	virtual void prepare_access_chain_for_scalar_access(std::string &expr, const SPIRType &type,
+	virtual bool prepare_access_chain_for_scalar_access(std::string &expr, const SPIRType &type,
 	                                                    spv::StorageClass storage, bool &is_packed);
 
 	std::string access_chain(uint32_t base, const uint32_t *indices, uint32_t count, const SPIRType &target_type,
@@ -825,7 +888,9 @@ protected:
 	bool buffer_is_packing_standard(const SPIRType &type, BufferPackingStandard packing,
 	                                uint32_t *failed_index = nullptr, uint32_t start_offset = 0,
 	                                uint32_t end_offset = ~(0u));
-	std::string buffer_to_packing_standard(const SPIRType &type, bool support_std430_without_scalar_layout);
+	std::string buffer_to_packing_standard(const SPIRType &type,
+	                                       bool support_std430_without_scalar_layout,
+	                                       bool support_enhanced_layouts);
 
 	uint32_t type_to_packed_base_size(const SPIRType &type, BufferPackingStandard packing);
 	uint32_t type_to_packed_alignment(const SPIRType &type, const Bitset &flags, BufferPackingStandard packing);
@@ -942,6 +1007,12 @@ protected:
 	std::vector<PlsRemap> pls_inputs;
 	std::vector<PlsRemap> pls_outputs;
 	std::string pls_decl(const PlsRemap &variable);
+
+	// UE Change Begin: Improved support for PLS and FBF
+	std::vector<PlsInOutRemap> pls_inouts;
+	std::string pls_decl(const PlsInOutRemap &variable);
+	// UE Change End: Improved support for PLS and FBF
+
 	const char *to_pls_qualifiers_glsl(const SPIRVariable &variable);
 	void emit_pls();
 	void remap_pls_variables();
@@ -993,6 +1064,7 @@ protected:
 	// Builtins in GLSL are always specific signedness, but the SPIR-V can declare them
 	// as either unsigned or signed.
 	// Sometimes we will need to automatically perform casts on load and store to make this work.
+	virtual SPIRType::BaseType get_builtin_basetype(spv::BuiltIn builtin, SPIRType::BaseType default_type);
 	virtual void cast_to_variable_store(uint32_t target_id, std::string &expr, const SPIRType &expr_type);
 	virtual void cast_from_variable_load(uint32_t source_id, std::string &expr, const SPIRType &expr_type);
 	void unroll_array_from_complex_load(uint32_t target_id, uint32_t source_id, std::string &expr);
@@ -1029,6 +1101,10 @@ protected:
 	uint32_t get_declared_member_location(const SPIRVariable &var, uint32_t mbr_idx, bool strip_array) const;
 	std::unordered_set<LocationComponentPair, InternalHasher> masked_output_locations;
 	std::unordered_set<uint32_t> masked_output_builtins;
+
+	FloatFormatter *float_formatter = nullptr;
+	std::string format_float(float value) const;
+	std::string format_double(double value) const;
 
 private:
 	void init();
