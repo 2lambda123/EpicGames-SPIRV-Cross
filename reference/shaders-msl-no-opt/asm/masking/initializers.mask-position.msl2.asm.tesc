@@ -10,7 +10,7 @@ template<typename T, size_t Num>
 struct spvUnsafeArray
 {
     T elements[Num ? Num : 1];
-    
+
     thread T& operator [] (size_t pos) thread
     {
         return elements[pos];
@@ -19,7 +19,7 @@ struct spvUnsafeArray
     {
         return elements[pos];
     }
-    
+
     device T& operator [] (size_t pos) device
     {
         return elements[pos];
@@ -28,12 +28,12 @@ struct spvUnsafeArray
     {
         return elements[pos];
     }
-    
+
     constexpr const constant T& operator [] (size_t pos) const constant
     {
         return elements[pos];
     }
-    
+
     threadgroup T& operator [] (size_t pos) threadgroup
     {
         return elements[pos];
@@ -72,7 +72,7 @@ struct main0_patchOut
 kernel void main0(uint gl_InvocationID [[thread_index_in_threadgroup]], uint gl_PrimitiveID [[threadgroup_position_in_grid]], device main0_out* spvOut [[buffer(28)]], constant uint* spvIndirectParams [[buffer(29)]], device main0_patchOut* spvPatchOut [[buffer(27)]], device MTLQuadTessellationFactorsHalf* spvTessLevel [[buffer(26)]])
 {
     spvUnsafeArray<gl_PerVertex, 4> _32 = spvUnsafeArray<gl_PerVertex, 4>({ gl_PerVertex{ float4(0.0), 0.0, spvUnsafeArray<float, 1>({ 0.0 }), spvUnsafeArray<float, 1>({ 0.0 }) }, gl_PerVertex{ float4(0.0), 0.0, spvUnsafeArray<float, 1>({ 0.0 }), spvUnsafeArray<float, 1>({ 0.0 }) }, gl_PerVertex{ float4(0.0), 0.0, spvUnsafeArray<float, 1>({ 0.0 }), spvUnsafeArray<float, 1>({ 0.0 }) }, gl_PerVertex{ float4(0.0), 0.0, spvUnsafeArray<float, 1>({ 0.0 }), spvUnsafeArray<float, 1>({ 0.0 }) } });
-    
+
     threadgroup spvUnsafeArray<gl_PerVertex, 4> gl_out_masked;
     device main0_out* gl_out = &spvOut[gl_PrimitiveID * 4];
     gl_out[gl_InvocationID].foo = _17[gl_InvocationID];
@@ -87,4 +87,3 @@ kernel void main0(uint gl_InvocationID [[thread_index_in_threadgroup]], uint gl_
     gl_out_masked[gl_InvocationID].gl_Position = float4(3.0);
     gl_out[gl_InvocationID].gl_PointSize = 4.0;
 }
-

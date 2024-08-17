@@ -25,4 +25,3 @@ void main()
 {
     uint _24 = atomicAdd(_13.bar.b, 1u);
 }
-

@@ -45,8 +45,7 @@ namespace SPIRV_CROSS_NAMESPACE
 #elif defined(_MSC_VER)
 __declspec(noreturn)
 #endif
-inline void
-report_and_abort(const std::string &msg)
+inline void report_and_abort(const std::string &msg)
 {
 #ifdef NDEBUG
 	(void)msg;

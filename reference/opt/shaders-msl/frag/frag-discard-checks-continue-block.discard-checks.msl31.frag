@@ -37,4 +37,3 @@ fragment main0_out main0(device foo& _24 [[buffer(0)]], float4 gl_FragCoord [[po
     out.fragColor = float4(float(_24.x), 0.0, 0.0, 1.0);
     return out;
 }
-

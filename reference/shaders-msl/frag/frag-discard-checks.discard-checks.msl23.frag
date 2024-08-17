@@ -67,4 +67,3 @@ fragment main0_out main0(device foo_t& foo [[buffer(0)]], texture2d<uint, access
     out.fragColor = _84;
     return out;
 }
-

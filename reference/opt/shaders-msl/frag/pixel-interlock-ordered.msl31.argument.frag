@@ -42,4 +42,3 @@ fragment void main0(constant spvDescriptorSetBuffer0& spvDescriptorSet0 [[buffer
     (*spvDescriptorSet0.m_42).foo += 42;
     uint _55 = atomic_fetch_and_explicit((volatile device atomic_uint*)&(*spvDescriptorSet0.m_42).bar, (*spvDescriptorSet0.m_52).quux, memory_order_relaxed);
 }
-

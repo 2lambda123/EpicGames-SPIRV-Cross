@@ -45,4 +45,3 @@ void main()
 {
     uintPointer _31 = _23();
 }
-

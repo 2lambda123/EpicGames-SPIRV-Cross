@@ -41,4 +41,3 @@ kernel void main0(constant spvDescriptorSetBuffer1& spvDescriptorSet1 [[buffer(1
 {
     ComputeAutoExposure(spvDescriptorSet1.rw_spd_global_atomic, spvDescriptorSet1.rw_spd_global_atomic_atomic);
 }
-

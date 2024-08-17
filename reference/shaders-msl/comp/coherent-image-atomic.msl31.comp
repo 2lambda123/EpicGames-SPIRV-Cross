@@ -29,4 +29,3 @@ kernel void main0(texture2d<uint, access::read_write> rw_spd_global_atomic [[tex
 {
     ComputeAutoExposure(rw_spd_global_atomic);
 }
-

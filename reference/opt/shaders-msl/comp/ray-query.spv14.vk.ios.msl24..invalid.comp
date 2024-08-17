@@ -94,4 +94,3 @@ kernel void main0(constant Params& _18 [[buffer(1)]], raytracing::acceleration_s
     float4x3 _116 = q2[1].get_committed_world_to_object_transform();
     matrices = _116;
 }
-

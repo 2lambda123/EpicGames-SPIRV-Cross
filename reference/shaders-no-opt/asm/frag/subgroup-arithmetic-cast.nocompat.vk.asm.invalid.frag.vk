@@ -21,4 +21,3 @@ void main()
     FragColor = subgroupClusteredMin(uint(index), 4u);
     FragColor = subgroupClusteredMax(_17, 4u);
 }
-

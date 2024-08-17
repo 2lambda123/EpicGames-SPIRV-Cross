@@ -80,4 +80,3 @@ kernel void main0(const device spvDescriptorSetBuffer0& spvDescriptorSet0 [[buff
 
     in_func((*spvDescriptorSet0.o), gl_GlobalInvocationID, (*spvDescriptorSet0.v), gl_WorkGroupID, vs, (*spvDescriptorSet1.w), ws);
 }
-

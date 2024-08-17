@@ -286,4 +286,3 @@ kernel void main0(device SSBO& _19 [[buffer(0)]])
     _19.s32 = spvFindSMSB(_19.s32);
     _19.s32 = int4(spvFindUMSB(_19.u32));
 }
-

@@ -23,4 +23,3 @@ void main()
 {
     PtrInt(_11.ptr).value = 10;
 }
-

@@ -11,4 +11,3 @@ fragment void main0(texture2d_ms<float> uImageMS [[texture(0)]], texture2d_array
     uImage.write(a, uint2(int2(2, 3)));
     uImageArray.write(b, uint2(int3(2, 3, 7).xy), uint(int3(2, 3, 7).z));
 }
-

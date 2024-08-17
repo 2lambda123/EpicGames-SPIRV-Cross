@@ -35,4 +35,3 @@ kernel void main0(texture2d<uint> rw_spd_global_atomic [[texture(0)]], volatile 
 {
     ComputeAutoExposure(rw_spd_global_atomic, rw_spd_global_atomic_atomic);
 }
-

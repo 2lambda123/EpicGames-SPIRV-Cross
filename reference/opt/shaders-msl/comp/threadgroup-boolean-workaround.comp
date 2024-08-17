@@ -10,7 +10,7 @@ template<typename T, size_t Num>
 struct spvUnsafeArray
 {
     T elements[Num ? Num : 1];
-    
+
     thread T& operator [] (size_t pos) thread
     {
         return elements[pos];
@@ -19,7 +19,7 @@ struct spvUnsafeArray
     {
         return elements[pos];
     }
-    
+
     device T& operator [] (size_t pos) device
     {
         return elements[pos];
@@ -28,12 +28,12 @@ struct spvUnsafeArray
     {
         return elements[pos];
     }
-    
+
     constexpr const constant T& operator [] (size_t pos) const constant
     {
         return elements[pos];
     }
-    
+
     threadgroup T& operator [] (size_t pos) threadgroup
     {
         return elements[pos];
@@ -58,4 +58,3 @@ kernel void main0(device SSBO& _23 [[buffer(0)]], uint gl_LocalInvocationIndex [
     threadgroup_barrier(mem_flags::mem_threadgroup);
     _23.values[gl_GlobalInvocationID.x] = select(float4(40.0), float4(30.0), bool4(foo[gl_LocalInvocationIndex ^ 3u]));
 }
-

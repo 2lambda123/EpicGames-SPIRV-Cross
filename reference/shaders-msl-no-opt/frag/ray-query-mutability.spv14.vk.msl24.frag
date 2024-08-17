@@ -67,4 +67,3 @@ fragment void main0(raytracing::acceleration_structure<raytracing::instancing> t
     initFn(rayQuery, topLevelAS);
     uint _55 = proceeFn(rayQuery);
 }
-

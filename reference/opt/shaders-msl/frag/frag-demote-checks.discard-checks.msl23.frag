@@ -62,4 +62,3 @@ fragment main0_out main0(device foo_t& foo [[buffer(0)]], texture2d<uint, access
     out.fragColor = float4(1.0, float(_125), 0.0, 1.0);
     return out;
 }
-

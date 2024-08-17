@@ -23,4 +23,3 @@ void main()
     uint0_stride_4Pointer _7 = uint0_stride_4Pointer(_15._m0);
     _7.value[10] = 20u;
 }
-

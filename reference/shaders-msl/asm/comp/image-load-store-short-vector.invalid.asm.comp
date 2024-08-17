@@ -20,4 +20,3 @@ kernel void main0(texture2d<float, access::read_write> TargetTexture [[texture(0
     uint3 param = id;
     _main(param, TargetTexture);
 }
-

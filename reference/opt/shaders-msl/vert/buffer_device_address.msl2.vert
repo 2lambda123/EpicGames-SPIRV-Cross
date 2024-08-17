@@ -38,4 +38,3 @@ vertex main0_out main0(constant Registers& registers [[buffer(0)]], uint gl_Inst
     out.out_color = float4(fma(0.300000011920928955078125, sin(float(_82)), 0.5) * _111, fma(0.300000011920928955078125, sin(float(_85)), 0.5) * _111, 0.1500000059604644775390625, 1.0);
     return out;
 }
-

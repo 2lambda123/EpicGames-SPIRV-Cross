@@ -230,4 +230,3 @@ fragment void main0(main0_in in [[stage_in]], const device spvBufferDescriptor<c
     raytracing::intersection_query<raytracing::instancing, raytracing::triangle_data> rayQuery_1;
     explicit_tlas(tlas[in.inputId], rayQuery_1);
 }
-

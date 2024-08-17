@@ -52,4 +52,3 @@ kernel void main0(const device spvDescriptorSetBuffer0& spvDescriptorSet0 [[buff
     (*spvDescriptorSet0.m_13).v[gl_GlobalInvocationID.x] = spvDescriptorSet0.T.sample(spvDescriptorSet1.S, float2(0.5), level(0.0));
     (*spvDescriptorSet0.m_13).v[gl_GlobalInvocationID.x] = Ts[gl_WorkGroupID.x].sample(Ss[gl_WorkGroupID.x], float2(0.5), level(0.0));
 }
-

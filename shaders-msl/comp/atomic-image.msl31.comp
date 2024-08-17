@@ -55,4 +55,3 @@ void main()
     atomicExchange(ssbo.i32, 1);
     atomicCompSwap(ssbo.i32, 10, 2);
 }
-

@@ -312,4 +312,3 @@ fragment main0_out main0(constant type_View& View [[buffer(0)]], constant type_G
     out.out_var_SV_Target0 = _220;
     return out;
 }
-

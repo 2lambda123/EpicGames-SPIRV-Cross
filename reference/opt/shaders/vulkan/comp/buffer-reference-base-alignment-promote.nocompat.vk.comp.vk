@@ -25,4 +25,3 @@ void main()
 {
     uint _31 = atomicAdd(_15.bar.a, _15.bar.b);
 }
-

@@ -15,4 +15,3 @@ void main()
     vec4 _38 = textureBoxFilterQCOM(tex_samp, v_texcoord.xy, vec2(2.5, 4.5));
     fragColor = _38;
 }
-

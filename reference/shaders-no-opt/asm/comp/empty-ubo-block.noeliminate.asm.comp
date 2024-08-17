@@ -9,4 +9,3 @@ layout(binding = 15, std140) uniform type_Primitive
 void main()
 {
 }
-

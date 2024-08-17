@@ -10,4 +10,3 @@ void main()
 {
     gl_Position = read_patch_vertices();
 }
-

@@ -52,4 +52,3 @@ void main()
     imageStore(_22[registers._m4], int((2u < _13._m0[_47].y) ? (2u + _13._m0[_47].x) : 4294967295u), vec4(float(_13._m0[_148].y)));
     imageStore(_22[registers._m4], int((3u < _13._m0[_47].y) ? (3u + _13._m0[_47].x) : 4294967295u), vec4(float(_13._m0[_172].y)));
 }
-

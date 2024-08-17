@@ -17,4 +17,3 @@ fragment main0_out main0(uint gl_SampleMaskIn [[sample_mask]], uint gl_SampleID 
     out.gl_SampleMask &= 0x22;
     return out;
 }
-

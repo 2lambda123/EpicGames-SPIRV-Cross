@@ -16,4 +16,3 @@ void main()
     vec4 _41 = textureWeightedQCOM(tex_samp, v_texcoord.xy, tex_samp_array);
     fragColor = _41;
 }
-
