@@ -15,21 +15,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-import os
-import os.path
-import subprocess
-import tempfile
-import re
-import itertools
-import hashlib
-import shutil
 import argparse
 import codecs
+import errno
+import hashlib
+import itertools
 import json
 import multiprocessing
-import errno
+import os
+import os.path
 import platform
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
 from functools import partial
 
 
