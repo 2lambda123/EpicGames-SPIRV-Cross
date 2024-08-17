@@ -65,4 +65,3 @@ fragment void main0(main0_in in [[stage_in]], const device spvBufferDescriptor<c
         discard_fragment();
     }
 }
-

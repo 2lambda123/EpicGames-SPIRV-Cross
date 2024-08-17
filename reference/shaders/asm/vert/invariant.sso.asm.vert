@@ -15,4 +15,3 @@ void main()
     vec4 _17 = _main();
     gl_Position = _17;
 }
-

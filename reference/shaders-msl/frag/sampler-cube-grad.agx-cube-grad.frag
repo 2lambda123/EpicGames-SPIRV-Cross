@@ -41,4 +41,3 @@ fragment main0_out main0(main0_in in [[stage_in]], texturecube<float> uSampler [
     out.FragColor += uSampler.sample(uSamplerSmplr, in.vTex, spvGradientCube(in.vTex, float3(5.0), float3(8.0)));
     return out;
 }
-

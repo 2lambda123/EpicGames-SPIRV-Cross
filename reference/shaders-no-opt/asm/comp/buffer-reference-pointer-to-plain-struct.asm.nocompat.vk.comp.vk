@@ -25,4 +25,3 @@ void main()
     _7.foos[0].a = 0u;
     _7.ptrfoo.value.a = 1u;
 }
-

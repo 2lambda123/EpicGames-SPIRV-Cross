@@ -61,4 +61,3 @@ fragment main0_out main0(device Foo& _20 [[buffer(0)]])
     out.FragColor = float4(1.0);
     return out;
 }
-

@@ -25,4 +25,3 @@ kernel void main0(constant spvDescriptorSetBuffer1& spvDescriptorSet1 [[buffer(1
 {
     uint _43 = atomic_fetch_add_explicit((volatile device atomic_uint*)&spvDescriptorSet1.rw_spd_global_atomic_atomic[spvImage2DAtomicCoord(int2(0), spvDescriptorSet1.rw_spd_global_atomic)], 1u, memory_order_relaxed);
 }
-

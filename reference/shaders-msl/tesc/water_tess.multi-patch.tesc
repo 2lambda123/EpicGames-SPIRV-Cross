@@ -132,4 +132,3 @@ kernel void main0(constant UBO& _41 [[buffer(0)]], uint3 gl_GlobalInvocationID [
         compute_tess_levels(param_1, _41, patchOut.vOutPatchPosBase, patchOut.vPatchLods, spvTessLevel[gl_PrimitiveID].edgeTessellationFactor, spvTessLevel[gl_PrimitiveID].insideTessellationFactor);
     }
 }
-

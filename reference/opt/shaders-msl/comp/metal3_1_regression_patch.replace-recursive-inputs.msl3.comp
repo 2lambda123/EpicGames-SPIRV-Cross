@@ -24,4 +24,3 @@ kernel void main0(device void* nums_vp [[buffer(0)]], texture2d<uint, access::wr
     device auto& nums = *(device recurs*)nums_vp;
     tex.write(uint4(uint((nums.m1 + nums.m2->m1) + nums.m2->m2->m1), 0u, 0u, 1u), uint2(int2(gl_GlobalInvocationID.xy)));
 }
-

@@ -74,4 +74,3 @@ kernel void main0(const device spvDescriptorSetBuffer0& spvDescriptorSet0 [[buff
     (*spvDescriptorSet0.o).v[gl_GlobalInvocationID.x] = (*spvDescriptorSet1.w).v[gl_WorkGroupID.x];
     (*spvDescriptorSet0.o).v[gl_GlobalInvocationID.x] = ws[gl_WorkGroupID.x]->v;
 }
-

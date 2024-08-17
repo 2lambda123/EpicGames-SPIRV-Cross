@@ -29,4 +29,3 @@ void main()
                     tex_samp_array);                               // combined weight texture
 
 }
-

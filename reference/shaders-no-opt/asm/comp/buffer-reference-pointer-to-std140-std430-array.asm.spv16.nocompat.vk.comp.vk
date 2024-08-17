@@ -25,4 +25,3 @@ void main()
     vec20_stride_8Pointer(registers.s).value[0u].x = 40.0;
     vec20_stride_16Pointer(registers.s).value[0u].x = 40.0;
 }
-

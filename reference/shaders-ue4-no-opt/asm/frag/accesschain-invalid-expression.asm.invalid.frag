@@ -358,4 +358,3 @@ fragment main0_out main0(main0_in in [[stage_in]], constant type_View& View [[bu
     out.out_var_SV_Target0 = _568;
     return out;
 }
-

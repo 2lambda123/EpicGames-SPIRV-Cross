@@ -29,4 +29,3 @@ void main()
     uintPointer _4 = uintPointerPointer(_14._m0).value;
     _4.value = 20u;
 }
-

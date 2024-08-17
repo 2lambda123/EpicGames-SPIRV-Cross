@@ -29,4 +29,3 @@ void main()
                     boxSize);                                      // box size
 
 }
-

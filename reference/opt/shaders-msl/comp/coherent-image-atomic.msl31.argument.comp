@@ -17,4 +17,3 @@ kernel void main0(constant spvDescriptorSetBuffer1& spvDescriptorSet1 [[buffer(1
 {
     uint _43 = spvDescriptorSet1.rw_spd_global_atomic.atomic_fetch_add(uint2(int2(0)), 1u).x;
 }
-

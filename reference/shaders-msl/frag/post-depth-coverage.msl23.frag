@@ -14,4 +14,3 @@ struct main0_out
     out.FragColor = float4(float(int(gl_SampleMaskIn)));
     return out;
 }
-

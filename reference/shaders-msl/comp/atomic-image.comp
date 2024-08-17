@@ -72,4 +72,3 @@ kernel void main0(device SSBO& ssbo [[buffer(2)]], texture2d<uint> uImage [[text
         _99 = 10;
     } while (!atomic_compare_exchange_weak_explicit((device atomic_int*)&ssbo.i32, &_99, 2, memory_order_relaxed, memory_order_relaxed) && _99 == 10);
 }
-

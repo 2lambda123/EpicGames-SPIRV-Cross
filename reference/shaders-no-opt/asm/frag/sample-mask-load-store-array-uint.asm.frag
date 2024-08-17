@@ -13,4 +13,3 @@ void main()
         gl_SampleMask[i] = int(copy_sample_mask[i]);
     }
 }
-

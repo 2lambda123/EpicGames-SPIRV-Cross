@@ -31,4 +31,3 @@ fragment void main0(device Buffer3& _9 [[buffer(0)]], volatile device Buffer& _4
     _42.foo += 42;
     uint _55 = atomic_fetch_and_explicit((volatile device atomic_uint*)&_42.bar, _52.quux, memory_order_relaxed);
 }
-

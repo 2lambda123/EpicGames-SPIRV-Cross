@@ -17,4 +17,3 @@ void main()
 {
     _6.ptr.value = uvec4(1u, 2u, 3u, 4u);
 }
-

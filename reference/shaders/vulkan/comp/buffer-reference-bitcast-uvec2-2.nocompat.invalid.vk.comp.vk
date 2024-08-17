@@ -19,4 +19,3 @@ void main()
 {
     _13.ptr = uvec2(_13.ptrint);
 }
-

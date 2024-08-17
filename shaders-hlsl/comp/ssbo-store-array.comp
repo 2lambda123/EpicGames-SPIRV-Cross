@@ -15,5 +15,3 @@ void main()
     Data d1;
     d[0].arr = d1.arr;
 }
-
-

@@ -46,4 +46,3 @@ void main()
         C[gl_LocalInvocationIndex].w = _32[_78];
     }
 }
-

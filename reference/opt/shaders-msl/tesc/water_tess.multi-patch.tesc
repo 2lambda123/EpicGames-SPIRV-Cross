@@ -88,4 +88,3 @@ kernel void main0(constant UBO& _41 [[buffer(0)]], uint3 gl_GlobalInvocationID [
         spvTessLevel[gl_PrimitiveID].insideTessellationFactor[1] = half(_948);
     }
 }
-
