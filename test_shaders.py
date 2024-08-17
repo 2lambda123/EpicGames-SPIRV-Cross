@@ -34,6 +34,7 @@ from functools import partial
 
 
 class Paths:
+    """ """
     def __init__(self, spirv_cross, glslang, spirv_as, spirv_val, spirv_opt):
         self.spirv_cross = spirv_cross
         self.glslang = glslang
@@ -43,11 +44,21 @@ class Paths:
 
 
 def remove_file(path):
+    """
+
+    :param path: 
+
+    """
     # print('Removing file:', path)
     os.remove(path)
 
 
 def create_temporary(suff=""):
+    """
+
+    :param suff:  (Default value = "")
+
+    """
     f, path = tempfile.mkstemp(suffix=suff)
     os.close(f)
     # print('Creating temporary:', path)
@@ -55,6 +66,11 @@ def create_temporary(suff=""):
 
 
 def parse_stats(stats):
+    """
+
+    :param stats: 
+
+    """
     m = re.search("([0-9]+) work registers", stats)
     registers = int(m.group(1)) if m else 0
 
@@ -82,6 +98,11 @@ def parse_stats(stats):
 
 
 def get_shader_type(shader):
+    """
+
+    :param shader: 
+
+    """
     _, ext = os.path.splitext(shader)
     if ext == ".vert":
         return "--vertex"
@@ -100,6 +121,11 @@ def get_shader_type(shader):
 
 
 def get_shader_stats(shader):
+    """
+
+    :param shader: 
+
+    """
     path = create_temporary()
 
     p = subprocess.Popen(
@@ -120,6 +146,7 @@ def get_shader_stats(shader):
 
 
 def print_msl_compiler_version():
+    """ """
     try:
         if platform.system() == "Darwin":
             subprocess.check_call(["xcrun", "--sdk", "iphoneos", "metal", "--version"])
@@ -139,6 +166,11 @@ def print_msl_compiler_version():
 
 
 def msl_compiler_supports_version(version):
+    """
+
+    :param version: 
+
+    """
     try:
         if platform.system() == "Darwin":
             subprocess.check_call(
@@ -177,6 +209,11 @@ def msl_compiler_supports_version(version):
 
 
 def path_to_msl_standard(shader):
+    """
+
+    :param shader: 
+
+    """
     if ".msl31." in shader:
         return "-std=metal3.1"
     elif ".msl3." in shader:
@@ -216,6 +253,11 @@ def path_to_msl_standard(shader):
 
 
 def path_to_msl_standard_cli(shader):
+    """
+
+    :param shader: 
+
+    """
     if ".msl31." in shader:
         return "30100"
     elif ".msl3." in shader:
@@ -240,6 +282,12 @@ ignore_win_metal_tool = False
 
 
 def validate_shader_msl(shader, opt):
+    """
+
+    :param shader: 
+    :param opt: 
+
+    """
     msl_path = reference_path(shader[0], shader[1], opt)
     global ignore_win_metal_tool
     try:
@@ -296,6 +344,15 @@ def validate_shader_msl(shader, opt):
 
 
 def cross_compile_msl(shader, spirv, opt, iterations, paths):
+    """
+
+    :param shader: 
+    :param spirv: 
+    :param opt: 
+    :param iterations: 
+    :param paths: 
+
+    """
     spirv_path = create_temporary()
     msl_path = create_temporary(os.path.basename(shader))
 
@@ -546,6 +603,11 @@ def cross_compile_msl(shader, spirv, opt, iterations, paths):
 
 
 def shader_model_hlsl(shader):
+    """
+
+    :param shader: 
+
+    """
     if ".vert" in shader:
         if ".sm30." in shader:
             return "-Tvs_3_0"
@@ -567,6 +629,11 @@ def shader_model_hlsl(shader):
 
 
 def shader_to_win_path(shader):
+    """
+
+    :param shader: 
+
+    """
     # It's (very) convenient to be able to run HLSL testing in wine on Unix-likes, so support that.
     try:
         with subprocess.Popen(
@@ -587,6 +654,13 @@ ignore_fxc = False
 
 
 def validate_shader_hlsl(shader, force_no_external_validation, paths):
+    """
+
+    :param shader: 
+    :param force_no_external_validation: 
+    :param paths: 
+
+    """
     test_glslang = True
     if ".nonuniformresource." in shader:
         test_glslang = False
@@ -635,6 +709,11 @@ def validate_shader_hlsl(shader, force_no_external_validation, paths):
 
 
 def shader_to_sm(shader):
+    """
+
+    :param shader: 
+
+    """
     if ".sm62." in shader:
         return "62"
     elif ".sm60." in shader:
@@ -650,6 +729,16 @@ def shader_to_sm(shader):
 def cross_compile_hlsl(
     shader, spirv, opt, force_no_external_validation, iterations, paths
 ):
+    """
+
+    :param shader: 
+    :param spirv: 
+    :param opt: 
+    :param force_no_external_validation: 
+    :param iterations: 
+    :param paths: 
+
+    """
     spirv_path = create_temporary()
     hlsl_path = create_temporary(os.path.basename(shader))
 
@@ -756,6 +845,15 @@ def cross_compile_hlsl(
 
 
 def cross_compile_reflect(shader, spirv, opt, iterations, paths):
+    """
+
+    :param shader: 
+    :param spirv: 
+    :param opt: 
+    :param iterations: 
+    :param paths: 
+
+    """
     spirv_path = create_temporary()
     reflect_path = create_temporary(os.path.basename(shader))
 
@@ -810,6 +908,13 @@ def cross_compile_reflect(shader, spirv, opt, iterations, paths):
 
 
 def validate_shader(shader, vulkan, paths):
+    """
+
+    :param shader: 
+    :param vulkan: 
+    :param paths: 
+
+    """
     if vulkan:
         spirv_14 = ".spv14." in shader
         glslang_env = "spirv1.4" if spirv_14 else "vulkan1.1"
@@ -836,6 +941,24 @@ def cross_compile(
     iterations,
     paths,
 ):
+    """
+
+    :param shader: 
+    :param vulkan: 
+    :param spirv: 
+    :param invalid_spirv: 
+    :param eliminate: 
+    :param is_legacy: 
+    :param force_es: 
+    :param flatten_ubo: 
+    :param sso: 
+    :param flatten_dim: 
+    :param opt: 
+    :param push_ubo: 
+    :param iterations: 
+    :param paths: 
+
+    """
     spirv_path = create_temporary()
     glsl_path = create_temporary(os.path.basename(shader))
 
@@ -971,12 +1094,22 @@ def cross_compile(
 
 
 def make_unix_newline(buf):
+    """
+
+    :param buf: 
+
+    """
     decoded = codecs.decode(buf, "utf-8")
     decoded = decoded.replace("\r", "")
     return codecs.encode(decoded, "utf-8")
 
 
 def md5_for_file(path):
+    """
+
+    :param path: 
+
+    """
     md5 = hashlib.md5()
     with open(path, "rb") as f:
         for chunk in iter(lambda: make_unix_newline(f.read(8192)), b""):
@@ -985,12 +1118,24 @@ def md5_for_file(path):
 
 
 def make_reference_dir(path):
+    """
+
+    :param path: 
+
+    """
     base = os.path.dirname(path)
     if not os.path.exists(base):
         os.makedirs(base)
 
 
 def reference_path(directory, relpath, opt):
+    """
+
+    :param directory: 
+    :param relpath: 
+    :param opt: 
+
+    """
     split_paths = os.path.split(directory)
     reference_dir = os.path.join(split_paths[0], "reference/" + ("opt/" if opt else ""))
     reference_dir = os.path.join(reference_dir, split_paths[1])
@@ -998,6 +1143,13 @@ def reference_path(directory, relpath, opt):
 
 
 def regression_check_reflect(shader, json_file, args):
+    """
+
+    :param shader: 
+    :param json_file: 
+    :param args: 
+
+    """
     reference = reference_path(shader[0], shader[1], args.opt) + ".json"
     joined_path = os.path.join(shader[0], shader[1])
     print("Reference shader reflection path:", reference)
@@ -1053,6 +1205,12 @@ def regression_check_reflect(shader, json_file, args):
 
 
 def generate_diff_file(origin, generated):
+    """
+
+    :param origin: 
+    :param generated: 
+
+    """
     diff_destination = create_temporary()
     with open(diff_destination, "w") as f:
         try:
@@ -1067,6 +1225,13 @@ def generate_diff_file(origin, generated):
 
 
 def regression_check(shader, glsl, args):
+    """
+
+    :param shader: 
+    :param glsl: 
+    :param args: 
+
+    """
     reference = reference_path(shader[0], shader[1], args.opt)
     joined_path = os.path.join(shader[0], shader[1])
     print("Reference shader path:", reference)
@@ -1120,54 +1285,122 @@ def regression_check(shader, glsl, args):
 
 
 def shader_is_vulkan(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".vk." in shader
 
 
 def shader_is_desktop(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".desktop." in shader
 
 
 def shader_is_eliminate_dead_variables(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".noeliminate." not in shader
 
 
 def shader_is_spirv(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".asm." in shader
 
 
 def shader_is_invalid_spirv(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".invalid." in shader
 
 
 def shader_is_legacy(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".legacy." in shader
 
 
 def shader_is_force_es(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".es." in shader
 
 
 def shader_is_flatten_ubo(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".flatten." in shader
 
 
 def shader_is_sso(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".sso." in shader
 
 
 def shader_is_flatten_dimensions(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".flatten_dim." in shader
 
 
 def shader_is_noopt(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".noopt." in shader
 
 
 def shader_is_push_ubo(shader):
+    """
+
+    :param shader: 
+
+    """
     return ".push-ubo." in shader
 
 
 def test_shader(stats, shader, args, paths):
+    """
+
+    :param stats: 
+    :param shader: 
+    :param args: 
+    :param paths: 
+
+    """
     joined_path = os.path.join(shader[0], shader[1])
     vulkan = shader_is_vulkan(shader[1])
     desktop = shader_is_desktop(shader[1])
@@ -1224,6 +1457,14 @@ def test_shader(stats, shader, args, paths):
 
 
 def test_shader_msl(stats, shader, args, paths):
+    """
+
+    :param stats: 
+    :param shader: 
+    :param args: 
+    :param paths: 
+
+    """
     joined_path = os.path.join(shader[0], shader[1])
     print("\nTesting MSL shader:", joined_path)
     is_spirv = shader_is_spirv(shader[1])
@@ -1271,6 +1512,14 @@ def test_shader_msl(stats, shader, args, paths):
 
 
 def test_shader_hlsl(stats, shader, args, paths):
+    """
+
+    :param stats: 
+    :param shader: 
+    :param args: 
+    :param paths: 
+
+    """
     joined_path = os.path.join(shader[0], shader[1])
     print("Testing HLSL shader:", joined_path)
     is_spirv = shader_is_spirv(shader[1])
@@ -1288,6 +1537,14 @@ def test_shader_hlsl(stats, shader, args, paths):
 
 
 def test_shader_reflect(stats, shader, args, paths):
+    """
+
+    :param stats: 
+    :param shader: 
+    :param args: 
+    :param paths: 
+
+    """
     joined_path = os.path.join(shader[0], shader[1])
     print("Testing shader reflection:", joined_path)
     is_spirv = shader_is_spirv(shader[1])
@@ -1300,6 +1557,14 @@ def test_shader_reflect(stats, shader, args, paths):
 
 
 def test_shader_file(relpath, stats, args, backend):
+    """
+
+    :param relpath: 
+    :param stats: 
+    :param args: 
+    :param backend: 
+
+    """
     paths = Paths(
         args.spirv_cross, args.glslang, args.spirv_as, args.spirv_val, args.spirv_opt
     )
@@ -1318,6 +1583,13 @@ def test_shader_file(relpath, stats, args, backend):
 
 
 def test_shaders_helper(stats, backend, args):
+    """
+
+    :param stats: 
+    :param backend: 
+    :param args: 
+
+    """
     all_files = []
     for root, dirs, files in os.walk(os.path.join(args.folder)):
         # ignore system files (esp OSX)
@@ -1355,6 +1627,12 @@ def test_shaders_helper(stats, backend, args):
 
 
 def test_shaders(backend, args):
+    """
+
+    :param backend: 
+    :param args: 
+
+    """
     if args.malisc:
         with open("stats.csv", "w") as stats:
             print(
@@ -1367,6 +1645,7 @@ def test_shaders(backend, args):
 
 
 def main():
+    """ """
     parser = argparse.ArgumentParser(description="Script for regression testing.")
     parser.add_argument("folder", help="Folder containing shader files to test.")
     parser.add_argument(
